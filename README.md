@@ -1,4 +1,15 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Developer Portfolio with Blog
+
+A modern, responsive portfolio website for developers with blog functionality. Built with Next.js, TypeScript, and Tailwind CSS.
+
+## Features
+
+- 🎨 Modern, responsive design with dark mode support
+- 📝 Blog section with tagging system
+- 💼 Project showcase with filtering capabilities
+- 🔐 Admin panel for managing content (projects and blog posts)
+- 📱 Mobile-friendly navigation
+- ⚡ Fast performance with Next.js
 
 ## Getting Started
 
@@ -16,18 +27,39 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Admin Access
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To access the admin panel:
+1. Navigate to `/login`
+2. Use the following credentials:
+   - Username: `admin`
+   - Password: `password123`
+
+From the admin panel, you can:
+- Add, edit, and delete projects
+- Add, edit, and delete blog posts
+
+## Project Structure
+
+```
+src/
+├── app/              # Next.js app router pages
+│   ├── admin/        # Admin panel pages
+│   ├── blog/         # Blog pages
+│   ├── projects/     # Projects pages
+│   ├── login/        # Login page
+│   └── ...           # Other pages
+├── lib/              # Utility functions and types
+└── data/             # Mock data
+```
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+To learn more about the technologies used:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs) - learn about Tailwind CSS
+- [TypeScript Documentation](https://www.typescriptlang.org/docs/) - learn about TypeScript
 
 ## Deploy on Vercel
 
