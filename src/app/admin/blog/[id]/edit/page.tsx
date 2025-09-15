@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getBlogPostById, updateBlogPost } from '@/lib/data';
@@ -17,18 +17,7 @@ export default function EditBlogPost({ params }: { params: Promise<{ id: string 
   const [saving, setSaving] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    // Check if user is authenticated
-    const auth = localStorage.getItem('isAuthenticated') === 'true';
-    if (!auth) {
-      router.push('/login');
-    } else {
-      setIsAuthenticated(true);
-      loadBlogPost();
-    }
-  }, [router]);
-
-  const loadBlogPost = async () => {
+  const loadBlogPost = useCallback(async () => {
     try {
       // Unwrap the params promise
       const { id } = await params;
@@ -50,7 +39,18 @@ export default function EditBlogPost({ params }: { params: Promise<{ id: string 
     } finally {
       setLoading(false);
     }
-  };
+  }, [params, router]);
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const auth = localStorage.getItem('isAuthenticated') === 'true';
+    if (!auth) {
+      router.push('/login');
+    } else {
+      setIsAuthenticated(true);
+      loadBlogPost();
+    }
+  }, [router, loadBlogPost]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

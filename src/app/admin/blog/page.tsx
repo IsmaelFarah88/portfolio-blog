@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getBlogPosts, deleteBlogPost } from '@/lib/data';
+import { BlogPost } from '@/lib/types';
 
-export default function AdminBlog() {
+export default function BlogPostsPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [blogPosts, setBlogPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const router = useRouter();
@@ -26,7 +27,7 @@ export default function AdminBlog() {
   const loadBlogPosts = async () => {
     try {
       const data = await getBlogPosts();
-      setBlogPosts(data);
+      setPosts(data);
     } catch (error) {
       console.error('Failed to load blog posts:', error);
     } finally {
@@ -55,7 +56,7 @@ export default function AdminBlog() {
   };
 
   // Filter posts based on search term
-  const filteredPosts = blogPosts.filter(post => 
+  const filteredPosts = posts.filter(post => 
     post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
     post.tags.some((tag: string) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -147,7 +148,7 @@ export default function AdminBlog() {
               </div>
               <div className="ml-4">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white">Total Posts</h3>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{blogPosts.length}</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{posts.length}</p>
               </div>
             </div>
           </div>
@@ -161,7 +162,7 @@ export default function AdminBlog() {
               </div>
               <div className="ml-4">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white">Published</h3>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{blogPosts.filter(p => new Date(p.date) <= new Date()).length}</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{posts.filter(p => new Date(p.date) <= new Date()).length}</p>
               </div>
             </div>
           </div>
@@ -176,7 +177,7 @@ export default function AdminBlog() {
               <div className="ml-4">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white">Tags</h3>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {Array.from(new Set(blogPosts.flatMap(post => post.tags))).length}
+                  {Array.from(new Set(posts.flatMap(post => post.tags))).length}
                 </p>
               </div>
             </div>

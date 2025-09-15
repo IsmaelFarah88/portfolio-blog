@@ -1,11 +1,23 @@
 import { NextResponse } from 'next/server';
 import db from '@/lib/db-server';
 
+// Define the certification type
+interface Certification {
+  id: number;
+  title: string;
+  organization: string;
+  date_issued: string;
+  expiry_date: string | null;
+  credential_id: string | null;
+  url: string | null;
+  created_at: string;
+}
+
 // GET /api/certifications/[id] - Get a specific certification
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const certification = db.prepare('SELECT * FROM certifications WHERE id = ?').get(id);
+    const certification = db.prepare('SELECT * FROM certifications WHERE id = ?').get(id) as Certification | undefined;
     
     if (!certification) {
       return NextResponse.json({ error: 'Certification not found' }, { status: 404 });
@@ -25,7 +37,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const data = await request.json();
     
     // Check if certification exists
-    const existingCert = db.prepare('SELECT * FROM certifications WHERE id = ?').get(id);
+    const existingCert = db.prepare('SELECT * FROM certifications WHERE id = ?').get(id) as Certification | undefined;
     if (!existingCert) {
       return NextResponse.json({ error: 'Certification not found' }, { status: 404 });
     }
@@ -50,7 +62,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Certification not found' }, { status: 404 });
     }
     
-    const updatedCert = db.prepare('SELECT * FROM certifications WHERE id = ?').get(id);
+    const updatedCert = db.prepare('SELECT * FROM certifications WHERE id = ?').get(id) as Certification;
     
     return NextResponse.json(updatedCert);
   } catch (error) {

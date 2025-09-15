@@ -1,11 +1,24 @@
 import { NextResponse } from 'next/server';
 import db from '@/lib/db-server';
 
+// Define the blog post type
+interface BlogPost {
+  id: number;
+  title: string;
+  excerpt: string;
+  content: string;
+  date: string;
+  tags: string;
+  image_url: string | null;
+  link_url: string | null;
+  created_at: string;
+}
+
 // GET /api/blog/[id] - Get a specific blog post
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const post = db.prepare('SELECT * FROM blog_posts WHERE id = ?').get(id);
+    const post = db.prepare('SELECT * FROM blog_posts WHERE id = ?').get(id) as BlogPost | undefined;
     
     if (!post) {
       return NextResponse.json({ error: 'Blog post not found' }, { status: 404 });
@@ -30,7 +43,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const data = await request.json();
     
     // Check if post exists
-    const existingPost = db.prepare('SELECT * FROM blog_posts WHERE id = ?').get(id);
+    const existingPost = db.prepare('SELECT * FROM blog_posts WHERE id = ?').get(id) as BlogPost | undefined;
     if (!existingPost) {
       return NextResponse.json({ error: 'Blog post not found' }, { status: 404 });
     }
@@ -55,10 +68,10 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Blog post not found' }, { status: 404 });
     }
     
-    const updatedPost = db.prepare('SELECT * FROM blog_posts WHERE id = ?').get(id);
+    const updatedPost = db.prepare('SELECT * FROM blog_posts WHERE id = ?').get(id) as BlogPost | undefined;
     const formattedPost = {
       ...updatedPost,
-      tags: updatedPost.tags ? JSON.parse(updatedPost.tags) : []
+      tags: updatedPost?.tags ? JSON.parse(updatedPost.tags) : []
     };
     
     return NextResponse.json(formattedPost);

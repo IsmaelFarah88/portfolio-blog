@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getProjectById, getSiteContent } from '@/lib/data';
 import { Project } from '@/lib/types';
 import { motion } from 'framer-motion';
@@ -69,7 +70,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Project Not Found</h2>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            The project you're looking for doesn't exist or has been removed.
+            The project you&apos;re looking for doesn&apos;t exist or has been removed.
           </p>
           <Link 
             href="/projects" 
@@ -134,10 +135,12 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             {/* Project Header with Image */}
             {project.imageUrl ? (
               <div className="relative h-64 md:h-80 w-full">
-                <img 
+                <Image 
                   src={project.imageUrl} 
                   alt={project.title} 
                   className="w-full h-full object-cover"
+                  fill
+                  unoptimized
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                 <div className="absolute bottom-0 left-0 p-6 md:p-8">
@@ -267,10 +270,13 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   <div className="lg:w-1/2">
                     {project.imageUrl && (
                       <div className="rounded-xl overflow-hidden shadow-lg mb-8">
-                        <img 
+                        <Image 
                           src={project.imageUrl} 
                           alt={project.title} 
                           className="w-full h-auto"
+                          width={600}
+                          height={400}
+                          unoptimized
                         />
                       </div>
                     )}

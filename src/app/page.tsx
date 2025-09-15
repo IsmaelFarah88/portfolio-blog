@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getSiteContent, getSkills, getCertifications, getProjects } from '@/lib/data';
 import { Skill, Certification, Project } from '@/lib/types';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,7 +14,6 @@ export default function Home() {
   const [certifications, setCertifications] = useState<Certification[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState('hero');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -148,7 +148,7 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                 >
-                  Hi, I'm <span className="text-gradient">Ismael Farah</span>
+                  Hi, I&apos;m <span className="text-gradient">Ismael Farah</span>
                 </motion.h1>
                 <motion.p 
                   className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-10 max-w-2xl leading-relaxed"
@@ -188,10 +188,13 @@ export default function Home() {
                 <div className="relative">
                   {siteContent.personal_image ? (
                     <div className="w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden shadow-2xl glow">
-                      <img 
+                      <Image 
                         src={siteContent.personal_image} 
                         alt="Ismael Farah" 
                         className="w-full h-full object-cover"
+                        width={320}
+                        height={320}
+                        unoptimized
                       />
                     </div>
                   ) : (
@@ -473,7 +476,7 @@ export default function Home() {
               >
                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Interested in Working Together?</h2>
                 <p className="text-indigo-100 mb-8 text-lg">
-                  I'm always open to discussing new opportunities and interesting projects.
+                  I&apos;m always open to discussing new opportunities and interesting projects.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Link 

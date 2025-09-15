@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getBlogPostById, getSiteContent } from '@/lib/data';
 import { BlogPost } from '@/lib/types';
 import { motion } from 'framer-motion';
@@ -67,7 +68,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ id: string 
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Blog Post Not Found</h2>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            The blog post you're looking for doesn't exist or has been removed.
+            The blog post you&apos;re looking for doesn&apos;t exist or has been removed.
           </p>
           <Link 
             href="/blog" 
@@ -130,10 +131,12 @@ export default function BlogPostPage({ params }: { params: Promise<{ id: string 
         >
           {post.imageUrl && (
             <div className="w-full h-64 md:h-80 relative">
-              <img 
+              <Image 
                 src={post.imageUrl} 
                 alt={post.title} 
                 className="w-full h-full object-cover"
+                fill
+                unoptimized
               />
             </div>
           )}

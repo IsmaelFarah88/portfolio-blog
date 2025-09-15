@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -284,7 +285,7 @@ export default function SiteContentPage() {
               onChange={(e) => handleContentChange('skills_list', e.target.value)}
               rows={4}
               className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition font-mono text-sm"
-              placeholder='Enter skills as JSON array, e.g., ["React", "Next.js", "TypeScript"]'
+              placeholder='Enter skills as JSON array, e.g., [&quot;React&quot;, &quot;Next.js&quot;, &quot;TypeScript&quot;]'
             ></textarea>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Enter as a valid JSON array of strings
@@ -308,7 +309,7 @@ export default function SiteContentPage() {
               placeholder="Enter copyright text"
             />
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Use {'{currentYear}'} to display the current year
+              Use &#123;&apos;currentYear&apos;&#125; to display the current year
             </p>
           </div>
           
@@ -322,7 +323,7 @@ export default function SiteContentPage() {
               onChange={(e) => handleContentChange('footer_links', e.target.value)}
               rows={3}
               className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition font-mono text-sm"
-              placeholder='Enter footer links as JSON array, e.g., ["Twitter", "GitHub", "LinkedIn"]'
+              placeholder='Enter footer links as JSON array, e.g., [&quot;Twitter&quot;, &quot;GitHub&quot;, &quot;LinkedIn&quot;]'
             ></textarea>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Enter as a valid JSON array of strings
@@ -426,7 +427,7 @@ export default function SiteContentPage() {
             
             <div>
               <label htmlFor="projects_all_button" className="block text-gray-700 dark:text-gray-300 mb-2">
-                "All Projects" Button Text
+                &quot;All Projects&quot; Button Text
               </label>
               <input
                 type="text"
@@ -434,7 +435,7 @@ export default function SiteContentPage() {
                 value={content.projects_all_button || ''}
                 onChange={(e) => handleContentChange('projects_all_button', e.target.value)}
                 className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                placeholder="Enter 'All Projects' button text"
+                placeholder="Enter &apos;All Projects&apos; button text"
               />
             </div>
           </div>
@@ -474,7 +475,7 @@ export default function SiteContentPage() {
             
             <div>
               <label htmlFor="blog_all_button" className="block text-gray-700 dark:text-gray-300 mb-2">
-                "All Posts" Button Text
+                &quot;All Posts&quot; Button Text
               </label>
               <input
                 type="text"
@@ -482,7 +483,7 @@ export default function SiteContentPage() {
                 value={content.blog_all_button || ''}
                 onChange={(e) => handleContentChange('blog_all_button', e.target.value)}
                 className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                placeholder="Enter 'All Posts' button text"
+                placeholder="Enter &apos;All Posts&apos; button text"
               />
             </div>
           </div>

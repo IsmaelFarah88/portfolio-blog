@@ -1,11 +1,24 @@
 import { NextResponse } from 'next/server';
 import db from '@/lib/db-server';
 
+// Define the project type
+interface Project {
+  id: number;
+  title: string;
+  description: string;
+  technologies: string;
+  image_url: string | null;
+  demo_url: string | null;
+  github_url: string | null;
+  date: string;
+  created_at: string;
+}
+
 // GET /api/projects/[id] - Get a specific project
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(id);
+    const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(id) as Project | undefined;
     
     if (!project) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
@@ -30,7 +43,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const data = await request.json();
     
     // Check if project exists
-    const existingProject = db.prepare('SELECT * FROM projects WHERE id = ?').get(id);
+    const existingProject = db.prepare('SELECT * FROM projects WHERE id = ?').get(id) as Project | undefined;
     if (!existingProject) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
@@ -56,7 +69,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
     
-    const updatedProject = db.prepare('SELECT * FROM projects WHERE id = ?').get(id);
+    const updatedProject = db.prepare('SELECT * FROM projects WHERE id = ?').get(id) as Project;
     const formattedProject = {
       ...updatedProject,
       technologies: updatedProject.technologies ? JSON.parse(updatedProject.technologies) : []

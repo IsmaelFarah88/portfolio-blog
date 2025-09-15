@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getProjects, deleteProject } from '@/lib/data';
+import { Project } from '@/lib/types';
 
 export default function ProjectsPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const router = useRouter();
@@ -150,7 +151,7 @@ export default function ProjectsPage() {
             </div>
             <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">No projects found</h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
-              You haven't created any projects yet. Get started by adding your first project.
+              You haven&apos;t created any projects yet. Get started by adding your first project.
             </p>
             <Link 
               href="/admin/projects/new"

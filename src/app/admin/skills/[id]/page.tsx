@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 
@@ -18,28 +18,7 @@ export default function EditSkill() {
   const params = useParams();
   const { id } = params;
 
-  useEffect(() => {
-    // Check if user is authenticated
-    const checkAuth = () => {
-      const localStorageAuth = localStorage.getItem('isAuthenticated') === 'true';
-      const cookieAuth = document.cookie.split(';').some((item) => item.trim().startsWith('isAuthenticated=true'));
-      
-      if (!localStorageAuth && !cookieAuth) {
-        router.push('/login');
-        return false;
-      }
-      
-      return true;
-    };
-    
-    const auth = checkAuth();
-    if (auth) {
-      setIsAuthenticated(true);
-      loadSkill();
-    }
-  }, [router, id]);
-
-  const loadSkill = async () => {
+  const loadSkill = useCallback(async () => {
     try {
       setSkillLoading(true);
       const response = await fetch(`/api/skills/${id}`);
@@ -61,7 +40,28 @@ export default function EditSkill() {
     } finally {
       setSkillLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const checkAuth = () => {
+      const localStorageAuth = localStorage.getItem('isAuthenticated') === 'true';
+      const cookieAuth = document.cookie.split(';').some((item) => item.trim().startsWith('isAuthenticated=true'));
+      
+      if (!localStorageAuth && !cookieAuth) {
+        router.push('/login');
+        return false;
+      }
+      
+      return true;
+    };
+    
+    const auth = checkAuth();
+    if (auth) {
+      setIsAuthenticated(true);
+      loadSkill();
+    }
+  }, [router, id, loadSkill]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;

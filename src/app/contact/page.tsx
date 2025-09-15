@@ -200,7 +200,7 @@ export default function ContactPage() {
               
               {submitSuccess && (
                 <div className="mb-6 p-4 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-lg">
-                  Your message has been sent successfully! I'll get back to you soon.
+                  Your message has been sent successfully! I&apos;ll get back to you soon.
                 </div>
               )}
               

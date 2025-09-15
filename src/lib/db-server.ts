@@ -85,35 +85,35 @@ export function initializeDatabase() {
   try {
     // Add image_url and link_url columns to blog_posts table if they don't exist
     db.exec(`ALTER TABLE blog_posts ADD COLUMN image_url TEXT`);
-  } catch (e) {
+  } catch (_error) {
     // Column already exists, ignore error
   }
   
   try {
     // Add link_url column to blog_posts table if it doesn't exist
     db.exec(`ALTER TABLE blog_posts ADD COLUMN link_url TEXT`);
-  } catch (e) {
+  } catch (_error) {
     // Column already exists, ignore error
   }
   
   try {
     // Add image_url column to projects table if it doesn't exist
     db.exec(`ALTER TABLE projects ADD COLUMN image_url TEXT`);
-  } catch (e) {
+  } catch (_error) {
     // Column already exists, ignore error
   }
   
   try {
     // Add demo_url column to projects table if it doesn't exist
     db.exec(`ALTER TABLE projects ADD COLUMN demo_url TEXT`);
-  } catch (e) {
+  } catch (_error) {
     // Column already exists, ignore error
   }
   
   try {
     // Add github_url column to projects table if it doesn't exist
     db.exec(`ALTER TABLE projects ADD COLUMN github_url TEXT`);
-  } catch (e) {
+  } catch (_error) {
     // Column already exists, ignore error
   }
 
@@ -127,7 +127,7 @@ export function initializeDatabase() {
   }
 
   // Insert sample projects if none exist
-  const projectCount = db.prepare('SELECT COUNT(*) as count FROM projects').get().count;
+  const projectCount = (db.prepare('SELECT COUNT(*) as count FROM projects').get() as { count: number }).count;
   if (projectCount === 0) {
     const insertProject = db.prepare(`
       INSERT INTO projects (title, description, technologies, date, image_url, demo_url, github_url)
@@ -168,7 +168,7 @@ export function initializeDatabase() {
   }
 
   // Insert sample blog posts if none exist
-  const blogPostCount = db.prepare('SELECT COUNT(*) as count FROM blog_posts').get().count;
+  const blogPostCount = (db.prepare('SELECT COUNT(*) as count FROM blog_posts').get() as { count: number }).count;
   if (blogPostCount === 0) {
     const insertBlogPost = db.prepare(`
       INSERT INTO blog_posts (title, excerpt, content, date, tags, image_url, link_url)
@@ -209,7 +209,7 @@ export function initializeDatabase() {
   }
 
   // Insert default site content if it doesn't exist
-  const siteContentCount = db.prepare('SELECT COUNT(*) as count FROM site_content').get().count;
+  const siteContentCount = (db.prepare('SELECT COUNT(*) as count FROM site_content').get() as { count: number }).count;
   if (siteContentCount === 0) {
     const insertContent = db.prepare(`
       INSERT INTO site_content (id, content)
@@ -274,7 +274,7 @@ export function initializeDatabase() {
   }
 
   // Insert sample certifications if none exist
-  const certificationsCount = db.prepare('SELECT COUNT(*) as count FROM certifications').get().count;
+  const certificationsCount = (db.prepare('SELECT COUNT(*) as count FROM certifications').get() as { count: number }).count;
   if (certificationsCount === 0) {
     const insertCert = db.prepare(`
       INSERT INTO certifications (title, organization, date_issued, expiry_date, credential_id)
@@ -301,7 +301,7 @@ export function initializeDatabase() {
   }
 
   // Insert sample skills if none exist
-  const skillsCount = db.prepare('SELECT COUNT(*) as count FROM skills').get().count;
+  const skillsCount = (db.prepare('SELECT COUNT(*) as count FROM skills').get() as { count: number }).count;
   if (skillsCount === 0) {
     const insertSkill = db.prepare(`
       INSERT INTO skills (name, proficiency, category)
@@ -325,7 +325,7 @@ export function initializeDatabase() {
   }
   
   // Insert sample programming languages if none exist
-  const programmingLanguagesCount = db.prepare('SELECT COUNT(*) as count FROM programming_languages').get().count;
+  const programmingLanguagesCount = (db.prepare('SELECT COUNT(*) as count FROM programming_languages').get() as { count: number }).count;
   if (programmingLanguagesCount === 0) {
     const insertLanguage = db.prepare(`
       INSERT INTO programming_languages (name, proficiency, icon_url)

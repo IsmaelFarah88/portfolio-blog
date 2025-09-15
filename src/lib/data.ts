@@ -136,7 +136,7 @@ export async function getBlogPostById(id: string): Promise<BlogPost | undefined>
   }
 }
 
-export async function getUserByUsername(username: string): Promise<User | undefined> {
+export async function getUserByUsername(): Promise<User | undefined> {
   // This would typically be handled by the login API endpoint
   // For now, we'll return undefined since we don't want to expose user data on the client
   return undefined;

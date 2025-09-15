@@ -1,11 +1,20 @@
 import { NextResponse } from 'next/server';
 import db from '@/lib/db-server';
 
+// Define the programming language type
+interface ProgrammingLanguage {
+  id: number;
+  name: string;
+  proficiency: number;
+  icon_url: string | null;
+  created_at: string;
+}
+
 // GET /api/programming-languages/[id] - Get a specific programming language
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const language = db.prepare('SELECT * FROM programming_languages WHERE id = ?').get(id);
+    const language = db.prepare('SELECT * FROM programming_languages WHERE id = ?').get(id) as ProgrammingLanguage | undefined;
     
     if (!language) {
       return NextResponse.json({ error: 'Programming language not found' }, { status: 404 });
@@ -25,7 +34,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const data = await request.json();
     
     // Check if language exists
-    const existingLanguage = db.prepare('SELECT * FROM programming_languages WHERE id = ?').get(id);
+    const existingLanguage = db.prepare('SELECT * FROM programming_languages WHERE id = ?').get(id) as ProgrammingLanguage | undefined;
     if (!existingLanguage) {
       return NextResponse.json({ error: 'Programming language not found' }, { status: 404 });
     }
@@ -47,7 +56,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Programming language not found' }, { status: 404 });
     }
     
-    const updatedLanguage = db.prepare('SELECT * FROM programming_languages WHERE id = ?').get(id);
+    const updatedLanguage = db.prepare('SELECT * FROM programming_languages WHERE id = ?').get(id) as ProgrammingLanguage;
     
     return NextResponse.json(updatedLanguage);
   } catch (error) {

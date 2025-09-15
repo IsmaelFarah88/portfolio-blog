@@ -3,13 +3,15 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
+import { ProgrammingLanguage } from '@/lib/types';
 
-export default function ProgrammingLanguagesAdmin() {
+export default function ProgrammingLanguagesPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [languages, setLanguages] = useState([]);
+  const [languages, setLanguages] = useState<ProgrammingLanguage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [deletingId, setDeletingId] = useState(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -60,7 +62,7 @@ export default function ProgrammingLanguagesAdmin() {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this programming language?')) {
       return;
     }
@@ -183,7 +185,7 @@ export default function ProgrammingLanguagesAdmin() {
                       <td className="px-6 py-4 font-medium">
                         <div className="flex items-center">
                           {language.icon_url && (
-                            <img src={language.icon_url} alt={language.name} className="w-6 h-6 mr-3" />
+                            <Image src={language.icon_url} alt={language.name} width={24} height={24} className="mr-3" />
                           )}
                           {language.name}
                         </div>

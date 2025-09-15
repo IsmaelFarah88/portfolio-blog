@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getProgrammingLanguages, getSiteContent } from '@/lib/data';
 import { ProgrammingLanguage } from '@/lib/types';
 import { motion } from 'framer-motion';
@@ -127,7 +128,7 @@ export default function ProgrammingLanguagesPage() {
                 
                 {language.icon_url && (
                   <div className="flex justify-center mb-4">
-                    <img src={language.icon_url} alt={language.name} className="w-16 h-16" />
+                    <Image src={language.icon_url} alt={language.name} className="w-16 h-16" width={64} height={64} unoptimized />
                   </div>
                 )}
                 

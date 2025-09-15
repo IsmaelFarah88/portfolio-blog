@@ -1,6 +1,14 @@
 import { NextResponse } from 'next/server';
 import db from '@/lib/db-server';
 
+// Define the user type
+interface User {
+  id: number;
+  username: string;
+  password: string;
+  created_at: string;
+}
+
 // POST /api/auth/login - Authenticate user
 export async function POST(request: Request) {
   try {
@@ -28,7 +36,7 @@ export async function POST(request: Request) {
     }
     
     // Get user from database
-    const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
+    const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username) as User | undefined;
     
     // Simple authentication (in a real app, this would use proper password hashing)
     if (user && user.password === password) {

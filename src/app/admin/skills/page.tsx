@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getSkills } from '@/lib/data';
+import { Skill } from '@/lib/types';
 
-export default function SkillsAdmin() {
+export default function SkillsPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [skills, setSkills] = useState<any[]>([]);
+  const [skills, setSkills] = useState<Skill[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -48,6 +50,8 @@ export default function SkillsAdmin() {
       return;
     }
     
+    setDeletingId(id);
+    
     try {
       const response = await fetch(`/api/skills/${id}`, {
         method: 'DELETE',
@@ -63,6 +67,8 @@ export default function SkillsAdmin() {
     } catch (error) {
       console.error('Delete error:', error);
       alert('Failed to delete skill');
+    } finally {
+      setDeletingId(null);
     }
   };
 

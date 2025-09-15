@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getProjects, getSiteContent } from '@/lib/data';
 import { Project } from '@/lib/types';
 import { motion } from 'framer-motion';
@@ -345,10 +346,13 @@ export default function ProjectsPage() {
               >
                 {project.imageUrl ? (
                   <div className="h-48 relative">
-                    <img 
+                    <Image 
                       src={project.imageUrl} 
                       alt={project.title} 
                       className="w-full h-full object-cover"
+                      width={400}
+                      height={192}
+                      unoptimized
                     />
                     <div className="absolute top-4 right-4 flex gap-2">
                       {project.demoUrl && (

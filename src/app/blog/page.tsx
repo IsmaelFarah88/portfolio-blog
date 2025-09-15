@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getBlogPosts, getSiteContent } from '@/lib/data';
 import { BlogPost } from '@/lib/types';
 import { motion } from 'framer-motion';
@@ -159,10 +160,12 @@ export default function BlogPage() {
             >
               {post.imageUrl ? (
                 <div className="h-48 relative">
-                  <img 
+                  <Image 
                     src={post.imageUrl} 
                     alt={post.title} 
                     className="w-full h-full object-cover"
+                    fill
+                    unoptimized
                   />
                 </div>
               ) : (

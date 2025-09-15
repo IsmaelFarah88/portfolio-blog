@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Certification } from '@/lib/types';
 import { getCertifications } from '@/lib/data';
 
-export default function CertificationsAdmin() {
+export default function CertificationsPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [certifications, setCertifications] = useState<any[]>([]);
+  const [certifications, setCertifications] = useState<Certification[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 

@@ -1,10 +1,23 @@
 import { NextResponse } from 'next/server';
 import db from '@/lib/db-server';
 
+// Define the project type
+interface Project {
+  id: number;
+  title: string;
+  description: string;
+  technologies: string;
+  image_url: string | null;
+  demo_url: string | null;
+  github_url: string | null;
+  date: string;
+  created_at: string;
+}
+
 // GET /api/projects - Get all projects
 export async function GET() {
   try {
-    const projects = db.prepare('SELECT * FROM projects ORDER BY date DESC').all();
+    const projects = db.prepare('SELECT * FROM projects ORDER BY date DESC').all() as Project[];
     const formattedProjects = projects.map(project => ({
       ...project,
       technologies: project.technologies ? JSON.parse(project.technologies) : []
@@ -41,7 +54,7 @@ export async function POST(request: Request) {
       data.date
     );
     
-    const newProject = db.prepare('SELECT * FROM projects WHERE id = ?').get(result.lastInsertRowid);
+    const newProject = db.prepare('SELECT * FROM projects WHERE id = ?').get(result.lastInsertRowid) as Project;
     const formattedProject = {
       ...newProject,
       technologies: newProject.technologies ? JSON.parse(newProject.technologies) : []

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 
@@ -18,28 +18,7 @@ export default function EditProgrammingLanguage() {
   const params = useParams();
   const { id } = params;
 
-  useEffect(() => {
-    // Check if user is authenticated
-    const checkAuth = () => {
-      const localStorageAuth = localStorage.getItem('isAuthenticated') === 'true';
-      const cookieAuth = document.cookie.split(';').some((item) => item.trim().startsWith('isAuthenticated=true'));
-      
-      if (!localStorageAuth && !cookieAuth) {
-        router.push('/login');
-        return false;
-      }
-      
-      return true;
-    };
-    
-    const auth = checkAuth();
-    if (auth) {
-      setIsAuthenticated(true);
-      loadLanguage();
-    }
-  }, [router, id]);
-
-  const loadLanguage = async () => {
+  const loadLanguage = useCallback(async () => {
     try {
       setLanguageLoading(true);
       const response = await fetch(`/api/programming-languages/${id}`);
@@ -61,7 +40,28 @@ export default function EditProgrammingLanguage() {
     } finally {
       setLanguageLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const checkAuth = () => {
+      const localStorageAuth = localStorage.getItem('isAuthenticated') === 'true';
+      const cookieAuth = document.cookie.split(';').some((item) => item.trim().startsWith('isAuthenticated=true'));
+      
+      if (!localStorageAuth && !cookieAuth) {
+        router.push('/login');
+        return false;
+      }
+      
+      return true;
+    };
+    
+    const auth = checkAuth();
+    if (auth) {
+      setIsAuthenticated(true);
+      loadLanguage();
+    }
+  }, [router, id, loadLanguage]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

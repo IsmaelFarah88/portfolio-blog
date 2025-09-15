@@ -1,11 +1,20 @@
 import { NextResponse } from 'next/server';
 import db from '@/lib/db-server';
 
+// Define the skill type
+interface Skill {
+  id: number;
+  name: string;
+  proficiency: number;
+  category: string;
+  created_at: string;
+}
+
 // GET /api/skills/[id] - Get a specific skill
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const skill = db.prepare('SELECT * FROM skills WHERE id = ?').get(id);
+    const skill = db.prepare('SELECT * FROM skills WHERE id = ?').get(id) as Skill | undefined;
     
     if (!skill) {
       return NextResponse.json({ error: 'Skill not found' }, { status: 404 });
@@ -25,7 +34,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const data = await request.json();
     
     // Check if skill exists
-    const existingSkill = db.prepare('SELECT * FROM skills WHERE id = ?').get(id);
+    const existingSkill = db.prepare('SELECT * FROM skills WHERE id = ?').get(id) as Skill | undefined;
     if (!existingSkill) {
       return NextResponse.json({ error: 'Skill not found' }, { status: 404 });
     }
@@ -47,7 +56,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Skill not found' }, { status: 404 });
     }
     
-    const updatedSkill = db.prepare('SELECT * FROM skills WHERE id = ?').get(id);
+    const updatedSkill = db.prepare('SELECT * FROM skills WHERE id = ?').get(id) as Skill;
     
     return NextResponse.json(updatedSkill);
   } catch (error) {

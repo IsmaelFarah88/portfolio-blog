@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Certification } from '@/lib/types';
 
 export default function CertificationDetail({ params }: { params: Promise<{ id: string }> }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [certification, setCertification] = useState<any>(null);
+  const [certification, setCertification] = useState<Certification | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState('');
@@ -18,18 +19,7 @@ export default function CertificationDetail({ params }: { params: Promise<{ id: 
   const [updating, setUpdating] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    // Check if user is authenticated
-    const auth = localStorage.getItem('isAuthenticated') === 'true';
-    if (!auth) {
-      router.push('/login');
-    } else {
-      setIsAuthenticated(true);
-      loadCertification();
-    }
-  }, [router]);
-
-  const loadCertification = async () => {
+  const loadCertification = useCallback(async () => {
     try {
       // Unwrap the params promise
       const { id } = await params;
@@ -52,7 +42,18 @@ export default function CertificationDetail({ params }: { params: Promise<{ id: 
     } finally {
       setLoading(false);
     }
-  };
+  }, [params, router]);
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const auth = localStorage.getItem('isAuthenticated') === 'true';
+    if (!auth) {
+      router.push('/login');
+    } else {
+      setIsAuthenticated(true);
+      loadCertification();
+    }
+  }, [router, loadCertification]);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -149,7 +150,7 @@ export default function CertificationDetail({ params }: { params: Promise<{ id: 
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Certification Not Found</h2>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            The certification you're looking for doesn't exist or has been removed.
+            The certification you&apos;re looking for doesn&apos;t exist or has been removed.
           </p>
           <Link 
             href="/admin/certifications" 
