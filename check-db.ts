@@ -1,5 +1,5 @@
 // Script to check and initialize the database if needed
-import { initializeDatabase } from './src/lib/db-server';
+import { initializeDatabase } from './src/lib/db-mysql';
 
 // Initialize the database
 try {

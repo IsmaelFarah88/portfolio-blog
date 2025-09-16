@@ -4,8 +4,8 @@ import db from '@/lib/db-mysql';
 // GET /api/projects - Get all projects
 export async function GET() {
   try {
-    const [projects] = await db.execute('SELECT * FROM projects ORDER BY date DESC');
-    const formattedProjects = Array.isArray(projects) ? projects.map(project => ({
+    const [projects]: any = await db.execute('SELECT * FROM projects ORDER BY date DESC');
+    const formattedProjects = Array.isArray(projects) ? projects.map((project: any) => ({
       ...project,
       technologies: project.technologies ? JSON.parse(project.technologies) : []
     })) : [];
