@@ -1,29 +1,17 @@
 import { NextResponse } from 'next/server';
-import db from '@/lib/db-server';
-
-// Define the project type
-interface Project {
-  id: number;
-  title: string;
-  description: string;
-  technologies: string;
-  image_url: string | null;
-  demo_url: string | null;
-  github_url: string | null;
-  date: string;
-  created_at: string;
-}
+import db from '@/lib/db-mysql';
 
 // GET /api/projects/[id] - Get a specific project
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(id) as Project | undefined;
+    const [projects]: any = await db.execute('SELECT * FROM projects WHERE id = ?', [id]);
     
-    if (!project) {
+    if (!projects || projects.length === 0) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
     
+    const project = projects[0];
     const formattedProject = {
       ...project,
       technologies: project.technologies ? JSON.parse(project.technologies) : []
@@ -43,33 +31,35 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const data = await request.json();
     
     // Check if project exists
-    const existingProject = db.prepare('SELECT * FROM projects WHERE id = ?').get(id) as Project | undefined;
-    if (!existingProject) {
+    const [existingProjects]: any = await db.execute('SELECT * FROM projects WHERE id = ?', [id]);
+    if (!existingProjects || existingProjects.length === 0) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
     
-    const update = db.prepare(`
-      UPDATE projects 
-      SET title = ?, description = ?, technologies = ?, image_url = ?, demo_url = ?, github_url = ?, date = ?
-      WHERE id = ?
-    `);
+    const existingProject = existingProjects[0];
     
-    const result = update.run(
-      data.title || existingProject.title,
-      data.description || existingProject.description,
-      data.technologies ? JSON.stringify(data.technologies) : existingProject.technologies,
-      data.imageUrl !== undefined ? data.imageUrl : existingProject.image_url,
-      data.demoUrl !== undefined ? data.demoUrl : existingProject.demo_url,
-      data.githubUrl !== undefined ? data.githubUrl : existingProject.github_url,
-      data.date || existingProject.date,
-      id
+    const [result]: any = await db.execute(
+      `UPDATE projects 
+      SET title = ?, description = ?, technologies = ?, image_url = ?, demo_url = ?, github_url = ?, date = ?
+      WHERE id = ?`,
+      [
+        data.title || existingProject.title,
+        data.description || existingProject.description,
+        data.technologies ? JSON.stringify(data.technologies) : existingProject.technologies,
+        data.imageUrl !== undefined ? data.imageUrl : existingProject.image_url,
+        data.demoUrl !== undefined ? data.demoUrl : existingProject.demo_url,
+        data.githubUrl !== undefined ? data.githubUrl : existingProject.github_url,
+        data.date || existingProject.date,
+        id
+      ]
     );
     
-    if (result.changes === 0) {
+    if (result.affectedRows === 0) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
     
-    const updatedProject = db.prepare('SELECT * FROM projects WHERE id = ?').get(id) as Project;
+    const [updatedProjects]: any = await db.execute('SELECT * FROM projects WHERE id = ?', [id]);
+    const updatedProject = updatedProjects[0];
     const formattedProject = {
       ...updatedProject,
       technologies: updatedProject.technologies ? JSON.parse(updatedProject.technologies) : []
@@ -86,10 +76,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const remove = db.prepare('DELETE FROM projects WHERE id = ?');
-    const result = remove.run(id);
+    const [result]: any = await db.execute('DELETE FROM projects WHERE id = ?', [id]);
     
-    if (result.changes === 0) {
+    if (result.affectedRows === 0) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
     

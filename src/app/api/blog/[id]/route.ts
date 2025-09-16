@@ -1,29 +1,17 @@
 import { NextResponse } from 'next/server';
-import db from '@/lib/db-server';
-
-// Define the blog post type
-interface BlogPost {
-  id: number;
-  title: string;
-  excerpt: string;
-  content: string;
-  date: string;
-  tags: string;
-  image_url: string | null;
-  link_url: string | null;
-  created_at: string;
-}
+import db from '@/lib/db-mysql';
 
 // GET /api/blog/[id] - Get a specific blog post
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const post = db.prepare('SELECT * FROM blog_posts WHERE id = ?').get(id) as BlogPost | undefined;
+    const [posts]: any = await db.execute('SELECT * FROM blog_posts WHERE id = ?', [id]);
     
-    if (!post) {
+    if (!posts || posts.length === 0) {
       return NextResponse.json({ error: 'Blog post not found' }, { status: 404 });
     }
     
+    const post = posts[0];
     const formattedPost = {
       ...post,
       tags: post.tags ? JSON.parse(post.tags) : []
@@ -43,35 +31,37 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const data = await request.json();
     
     // Check if post exists
-    const existingPost = db.prepare('SELECT * FROM blog_posts WHERE id = ?').get(id) as BlogPost | undefined;
-    if (!existingPost) {
+    const [existingPosts]: any = await db.execute('SELECT * FROM blog_posts WHERE id = ?', [id]);
+    if (!existingPosts || existingPosts.length === 0) {
       return NextResponse.json({ error: 'Blog post not found' }, { status: 404 });
     }
     
-    const update = db.prepare(`
-      UPDATE blog_posts 
-      SET title = ?, excerpt = ?, content = ?, tags = ?, image_url = ?, link_url = ?
-      WHERE id = ?
-    `);
+    const existingPost = existingPosts[0];
     
-    const result = update.run(
-      data.title || existingPost.title,
-      data.excerpt || existingPost.excerpt,
-      data.content || existingPost.content,
-      data.tags ? JSON.stringify(data.tags) : existingPost.tags,
-      data.imageUrl !== undefined ? data.imageUrl : existingPost.image_url,
-      data.linkUrl !== undefined ? data.linkUrl : existingPost.link_url,
-      id
+    const [result]: any = await db.execute(
+      `UPDATE blog_posts 
+      SET title = ?, excerpt = ?, content = ?, tags = ?, image_url = ?, link_url = ?
+      WHERE id = ?`,
+      [
+        data.title || existingPost.title,
+        data.excerpt || existingPost.excerpt,
+        data.content || existingPost.content,
+        data.tags ? JSON.stringify(data.tags) : existingPost.tags,
+        data.imageUrl !== undefined ? data.imageUrl : existingPost.image_url,
+        data.linkUrl !== undefined ? data.linkUrl : existingPost.link_url,
+        id
+      ]
     );
     
-    if (result.changes === 0) {
+    if (result.affectedRows === 0) {
       return NextResponse.json({ error: 'Blog post not found' }, { status: 404 });
     }
     
-    const updatedPost = db.prepare('SELECT * FROM blog_posts WHERE id = ?').get(id) as BlogPost | undefined;
+    const [updatedPosts]: any = await db.execute('SELECT * FROM blog_posts WHERE id = ?', [id]);
+    const updatedPost = updatedPosts[0];
     const formattedPost = {
       ...updatedPost,
-      tags: updatedPost?.tags ? JSON.parse(updatedPost.tags) : []
+      tags: updatedPost.tags ? JSON.parse(updatedPost.tags) : []
     };
     
     return NextResponse.json(formattedPost);
@@ -85,10 +75,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const remove = db.prepare('DELETE FROM blog_posts WHERE id = ?');
-    const result = remove.run(id);
+    const [result]: any = await db.execute('DELETE FROM blog_posts WHERE id = ?', [id]);
     
-    if (result.changes === 0) {
+    if (result.affectedRows === 0) {
       return NextResponse.json({ error: 'Blog post not found' }, { status: 404 });
     }
     

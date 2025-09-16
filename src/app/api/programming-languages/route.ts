@@ -1,16 +1,10 @@
 import { NextResponse } from 'next/server';
-import db from '@/lib/db-server';
+import db from '@/lib/db-mysql';
 
 // GET /api/programming-languages - Get all programming languages
 export async function GET() {
   try {
-    const languages = db.prepare('SELECT * FROM programming_languages ORDER BY name').all() as { 
-      id: string; 
-      name: string; 
-      proficiency: number; 
-      icon_url: string; 
-      created_at: string; 
-    }[];
+    const [languages]: any = await db.execute('SELECT * FROM programming_languages ORDER BY name');
     
     return NextResponse.json(languages);
   } catch (error) {
@@ -24,24 +18,17 @@ export async function POST(request: Request) {
   try {
     const data = await request.json();
     
-    const insert = db.prepare(`
-      INSERT INTO programming_languages (name, proficiency, icon_url)
-      VALUES (?, ?, ?)
-    `);
-    
-    const result = insert.run(
-      data.name,
-      data.proficiency,
-      data.icon_url || ''
+    const [result]: any = await db.execute(
+      'INSERT INTO programming_languages (name, proficiency, icon_url) VALUES (?, ?, ?)',
+      [
+        data.name,
+        data.proficiency,
+        data.icon_url || ''
+      ]
     );
     
-    const newLanguage = db.prepare('SELECT * FROM programming_languages WHERE id = ?').get(result.lastInsertRowid) as { 
-      id: string; 
-      name: string; 
-      proficiency: number; 
-      icon_url: string; 
-      created_at: string; 
-    };
+    const [newLanguages]: any = await db.execute('SELECT * FROM programming_languages WHERE id = ?', [result.insertId]);
+    const newLanguage = newLanguages[0];
     
     return NextResponse.json(newLanguage);
   } catch (error) {

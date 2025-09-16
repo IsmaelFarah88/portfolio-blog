@@ -1,26 +1,17 @@
 import { NextResponse } from 'next/server';
-import db from '@/lib/db-server';
-
-// Define the programming language type
-interface ProgrammingLanguage {
-  id: number;
-  name: string;
-  proficiency: number;
-  icon_url: string | null;
-  created_at: string;
-}
+import db from '@/lib/db-mysql';
 
 // GET /api/programming-languages/[id] - Get a specific programming language
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const language = db.prepare('SELECT * FROM programming_languages WHERE id = ?').get(id) as ProgrammingLanguage | undefined;
+    const [languages]: any = await db.execute('SELECT * FROM programming_languages WHERE id = ?', [id]);
     
-    if (!language) {
+    if (!languages || languages.length === 0) {
       return NextResponse.json({ error: 'Programming language not found' }, { status: 404 });
     }
     
-    return NextResponse.json(language);
+    return NextResponse.json(languages[0]);
   } catch (error) {
     console.error('Failed to fetch programming language:', error);
     return NextResponse.json({ error: 'Failed to fetch programming language' }, { status: 500 });
@@ -34,29 +25,31 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const data = await request.json();
     
     // Check if language exists
-    const existingLanguage = db.prepare('SELECT * FROM programming_languages WHERE id = ?').get(id) as ProgrammingLanguage | undefined;
-    if (!existingLanguage) {
+    const [existingLanguages]: any = await db.execute('SELECT * FROM programming_languages WHERE id = ?', [id]);
+    if (!existingLanguages || existingLanguages.length === 0) {
       return NextResponse.json({ error: 'Programming language not found' }, { status: 404 });
     }
     
-    const update = db.prepare(`
-      UPDATE programming_languages 
-      SET name = ?, proficiency = ?, icon_url = ?
-      WHERE id = ?
-    `);
+    const existingLanguage = existingLanguages[0];
     
-    const result = update.run(
-      data.name || existingLanguage.name,
-      data.proficiency || existingLanguage.proficiency,
-      data.icon_url !== undefined ? data.icon_url : existingLanguage.icon_url,
-      id
+    const [result]: any = await db.execute(
+      `UPDATE programming_languages 
+      SET name = ?, proficiency = ?, icon_url = ?
+      WHERE id = ?`,
+      [
+        data.name || existingLanguage.name,
+        data.proficiency || existingLanguage.proficiency,
+        data.icon_url !== undefined ? data.icon_url : existingLanguage.icon_url,
+        id
+      ]
     );
     
-    if (result.changes === 0) {
+    if (result.affectedRows === 0) {
       return NextResponse.json({ error: 'Programming language not found' }, { status: 404 });
     }
     
-    const updatedLanguage = db.prepare('SELECT * FROM programming_languages WHERE id = ?').get(id) as ProgrammingLanguage;
+    const [updatedLanguages]: any = await db.execute('SELECT * FROM programming_languages WHERE id = ?', [id]);
+    const updatedLanguage = updatedLanguages[0];
     
     return NextResponse.json(updatedLanguage);
   } catch (error) {
@@ -69,10 +62,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const remove = db.prepare('DELETE FROM programming_languages WHERE id = ?');
-    const result = remove.run(id);
+    const [result]: any = await db.execute('DELETE FROM programming_languages WHERE id = ?', [id]);
     
-    if (result.changes === 0) {
+    if (result.affectedRows === 0) {
       return NextResponse.json({ error: 'Programming language not found' }, { status: 404 });
     }
     

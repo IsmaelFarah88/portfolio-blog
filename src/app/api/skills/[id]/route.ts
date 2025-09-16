@@ -1,26 +1,17 @@
 import { NextResponse } from 'next/server';
-import db from '@/lib/db-server';
-
-// Define the skill type
-interface Skill {
-  id: number;
-  name: string;
-  proficiency: number;
-  category: string;
-  created_at: string;
-}
+import db from '@/lib/db-mysql';
 
 // GET /api/skills/[id] - Get a specific skill
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const skill = db.prepare('SELECT * FROM skills WHERE id = ?').get(id) as Skill | undefined;
+    const [skills]: any = await db.execute('SELECT * FROM skills WHERE id = ?', [id]);
     
-    if (!skill) {
+    if (!skills || skills.length === 0) {
       return NextResponse.json({ error: 'Skill not found' }, { status: 404 });
     }
     
-    return NextResponse.json(skill);
+    return NextResponse.json(skills[0]);
   } catch (error) {
     console.error('Failed to fetch skill:', error);
     return NextResponse.json({ error: 'Failed to fetch skill' }, { status: 500 });
@@ -34,29 +25,31 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const data = await request.json();
     
     // Check if skill exists
-    const existingSkill = db.prepare('SELECT * FROM skills WHERE id = ?').get(id) as Skill | undefined;
-    if (!existingSkill) {
+    const [existingSkills]: any = await db.execute('SELECT * FROM skills WHERE id = ?', [id]);
+    if (!existingSkills || existingSkills.length === 0) {
       return NextResponse.json({ error: 'Skill not found' }, { status: 404 });
     }
     
-    const update = db.prepare(`
-      UPDATE skills 
-      SET name = ?, proficiency = ?, category = ?
-      WHERE id = ?
-    `);
+    const existingSkill = existingSkills[0];
     
-    const result = update.run(
-      data.name || existingSkill.name,
-      data.proficiency || existingSkill.proficiency,
-      data.category || existingSkill.category,
-      id
+    const [result]: any = await db.execute(
+      `UPDATE skills 
+      SET name = ?, proficiency = ?, category = ?
+      WHERE id = ?`,
+      [
+        data.name || existingSkill.name,
+        data.proficiency || existingSkill.proficiency,
+        data.category || existingSkill.category,
+        id
+      ]
     );
     
-    if (result.changes === 0) {
+    if (result.affectedRows === 0) {
       return NextResponse.json({ error: 'Skill not found' }, { status: 404 });
     }
     
-    const updatedSkill = db.prepare('SELECT * FROM skills WHERE id = ?').get(id) as Skill;
+    const [updatedSkills]: any = await db.execute('SELECT * FROM skills WHERE id = ?', [id]);
+    const updatedSkill = updatedSkills[0];
     
     return NextResponse.json(updatedSkill);
   } catch (error) {
@@ -69,10 +62,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const remove = db.prepare('DELETE FROM skills WHERE id = ?');
-    const result = remove.run(id);
+    const [result]: any = await db.execute('DELETE FROM skills WHERE id = ?', [id]);
     
-    if (result.changes === 0) {
+    if (result.affectedRows === 0) {
       return NextResponse.json({ error: 'Skill not found' }, { status: 404 });
     }
     

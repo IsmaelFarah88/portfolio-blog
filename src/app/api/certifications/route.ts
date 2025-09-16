@@ -1,19 +1,10 @@
 import { NextResponse } from 'next/server';
-import db from '@/lib/db-server';
+import db from '@/lib/db-mysql';
 
 // GET /api/certifications - Get all certifications
 export async function GET() {
   try {
-    const certifications = db.prepare('SELECT * FROM certifications ORDER BY date_issued DESC').all() as { 
-      id: string; 
-      title: string; 
-      organization: string; 
-      date_issued: string; 
-      expiry_date: string | null; 
-      credential_id: string | null; 
-      url: string | null; 
-      created_at: string; 
-    }[];
+    const [certifications]: any = await db.execute('SELECT * FROM certifications ORDER BY date_issued DESC');
     
     return NextResponse.json(certifications);
   } catch (error) {
@@ -27,30 +18,20 @@ export async function POST(request: Request) {
   try {
     const data = await request.json();
     
-    const insert = db.prepare(`
-      INSERT INTO certifications (title, organization, date_issued, expiry_date, credential_id, url)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `);
-    
-    const result = insert.run(
-      data.title,
-      data.organization,
-      data.date_issued,
-      data.expiry_date || null,
-      data.credential_id || null,
-      data.url || null
+    const [result]: any = await db.execute(
+      'INSERT INTO certifications (title, organization, date_issued, expiry_date, credential_id, url) VALUES (?, ?, ?, ?, ?, ?)',
+      [
+        data.title,
+        data.organization,
+        data.date_issued,
+        data.expiry_date || null,
+        data.credential_id || null,
+        data.url || null
+      ]
     );
     
-    const newCertification = db.prepare('SELECT * FROM certifications WHERE id = ?').get(result.lastInsertRowid) as { 
-      id: string; 
-      title: string; 
-      organization: string; 
-      date_issued: string; 
-      expiry_date: string | null; 
-      credential_id: string | null; 
-      url: string | null; 
-      created_at: string; 
-    };
+    const [newCertifications]: any = await db.execute('SELECT * FROM certifications WHERE id = ?', [result.insertId]);
+    const newCertification = newCertifications[0];
     
     return NextResponse.json(newCertification);
   } catch (error) {

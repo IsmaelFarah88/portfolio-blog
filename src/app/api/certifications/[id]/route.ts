@@ -1,29 +1,17 @@
 import { NextResponse } from 'next/server';
-import db from '@/lib/db-server';
-
-// Define the certification type
-interface Certification {
-  id: number;
-  title: string;
-  organization: string;
-  date_issued: string;
-  expiry_date: string | null;
-  credential_id: string | null;
-  url: string | null;
-  created_at: string;
-}
+import db from '@/lib/db-mysql';
 
 // GET /api/certifications/[id] - Get a specific certification
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const certification = db.prepare('SELECT * FROM certifications WHERE id = ?').get(id) as Certification | undefined;
+    const [certifications]: any = await db.execute('SELECT * FROM certifications WHERE id = ?', [id]);
     
-    if (!certification) {
+    if (!certifications || certifications.length === 0) {
       return NextResponse.json({ error: 'Certification not found' }, { status: 404 });
     }
     
-    return NextResponse.json(certification);
+    return NextResponse.json(certifications[0]);
   } catch (error) {
     console.error('Failed to fetch certification:', error);
     return NextResponse.json({ error: 'Failed to fetch certification' }, { status: 500 });
@@ -37,32 +25,34 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const data = await request.json();
     
     // Check if certification exists
-    const existingCert = db.prepare('SELECT * FROM certifications WHERE id = ?').get(id) as Certification | undefined;
-    if (!existingCert) {
+    const [existingCerts]: any = await db.execute('SELECT * FROM certifications WHERE id = ?', [id]);
+    if (!existingCerts || existingCerts.length === 0) {
       return NextResponse.json({ error: 'Certification not found' }, { status: 404 });
     }
     
-    const update = db.prepare(`
-      UPDATE certifications 
-      SET title = ?, organization = ?, date_issued = ?, expiry_date = ?, credential_id = ?, url = ?
-      WHERE id = ?
-    `);
+    const existingCert = existingCerts[0];
     
-    const result = update.run(
-      data.title || existingCert.title,
-      data.organization || existingCert.organization,
-      data.date_issued || existingCert.date_issued,
-      data.expiry_date !== undefined ? data.expiry_date : existingCert.expiry_date,
-      data.credential_id !== undefined ? data.credential_id : existingCert.credential_id,
-      data.url !== undefined ? data.url : existingCert.url,
-      id
+    const [result]: any = await db.execute(
+      `UPDATE certifications 
+      SET title = ?, organization = ?, date_issued = ?, expiry_date = ?, credential_id = ?, url = ?
+      WHERE id = ?`,
+      [
+        data.title || existingCert.title,
+        data.organization || existingCert.organization,
+        data.date_issued || existingCert.date_issued,
+        data.expiry_date !== undefined ? data.expiry_date : existingCert.expiry_date,
+        data.credential_id !== undefined ? data.credential_id : existingCert.credential_id,
+        data.url !== undefined ? data.url : existingCert.url,
+        id
+      ]
     );
     
-    if (result.changes === 0) {
+    if (result.affectedRows === 0) {
       return NextResponse.json({ error: 'Certification not found' }, { status: 404 });
     }
     
-    const updatedCert = db.prepare('SELECT * FROM certifications WHERE id = ?').get(id) as Certification;
+    const [updatedCerts]: any = await db.execute('SELECT * FROM certifications WHERE id = ?', [id]);
+    const updatedCert = updatedCerts[0];
     
     return NextResponse.json(updatedCert);
   } catch (error) {
@@ -75,10 +65,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const remove = db.prepare('DELETE FROM certifications WHERE id = ?');
-    const result = remove.run(id);
+    const [result]: any = await db.execute('DELETE FROM certifications WHERE id = ?', [id]);
     
-    if (result.changes === 0) {
+    if (result.affectedRows === 0) {
       return NextResponse.json({ error: 'Certification not found' }, { status: 404 });
     }
     

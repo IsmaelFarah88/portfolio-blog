@@ -1,27 +1,14 @@
 import { NextResponse } from 'next/server';
-import db from '@/lib/db-server';
-
-// Define the project type
-interface Project {
-  id: number;
-  title: string;
-  description: string;
-  technologies: string;
-  image_url: string | null;
-  demo_url: string | null;
-  github_url: string | null;
-  date: string;
-  created_at: string;
-}
+import db from '@/lib/db-mysql';
 
 // GET /api/projects - Get all projects
 export async function GET() {
   try {
-    const projects = db.prepare('SELECT * FROM projects ORDER BY date DESC').all() as Project[];
-    const formattedProjects = projects.map(project => ({
+    const [projects] = await db.execute('SELECT * FROM projects ORDER BY date DESC');
+    const formattedProjects = Array.isArray(projects) ? projects.map(project => ({
       ...project,
       technologies: project.technologies ? JSON.parse(project.technologies) : []
-    }));
+    })) : [];
     return NextResponse.json(formattedProjects);
   } catch (error) {
     console.error('Failed to fetch projects:', error);
@@ -39,25 +26,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
     
-    const insert = db.prepare(`
-      INSERT INTO projects (title, description, technologies, image_url, demo_url, github_url, date)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `);
-    
-    const result = insert.run(
-      data.title,
-      data.description,
-      JSON.stringify(data.technologies),
-      data.imageUrl || null,
-      data.demoUrl || null,
-      data.githubUrl || null,
-      data.date
+    const [result]: any = await db.execute(
+      'INSERT INTO projects (title, description, technologies, image_url, demo_url, github_url, date) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [
+        data.title,
+        data.description,
+        JSON.stringify(data.technologies),
+        data.imageUrl || null,
+        data.demoUrl || null,
+        data.githubUrl || null,
+        data.date
+      ]
     );
     
-    const newProject = db.prepare('SELECT * FROM projects WHERE id = ?').get(result.lastInsertRowid) as Project;
+    const [newProject]: any = await db.execute('SELECT * FROM projects WHERE id = ?', [result.insertId]);
     const formattedProject = {
-      ...newProject,
-      technologies: newProject.technologies ? JSON.parse(newProject.technologies) : []
+      ...newProject[0],
+      technologies: newProject[0].technologies ? JSON.parse(newProject[0].technologies) : []
     };
     
     return NextResponse.json(formattedProject);
