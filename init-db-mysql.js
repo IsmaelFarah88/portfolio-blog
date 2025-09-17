@@ -3,6 +3,18 @@ const fs = require('fs');
 require('dotenv').config();
 
 // Create a connection pool
+const getSslOptions = () => {
+  if (process.env.MYSQL_CA_CERT) {
+    return { ca: process.env.MYSQL_CA_CERT };
+  }
+  try {
+    return { ca: fs.readFileSync('certs/ca.pem') };
+  } catch (error) {
+    console.warn('CA certificate file not found. Relying on MYSQL_CA_CERT environment variable.');
+    return {};
+  }
+};
+
 const pool = mysql.createPool({
   host: process.env.MYSQL_HOST,
   port: parseInt(process.env.MYSQL_PORT || '3306'),
@@ -12,9 +24,7 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
-  ssl: {
-    ca: process.env.MYSQL_CA_CERT || fs.readFileSync('certs/ca.pem'),
-  }
+  ssl: getSslOptions()
 });
 
 // Function to initialize the database schema
