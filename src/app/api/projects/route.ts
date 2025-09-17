@@ -5,10 +5,20 @@ import db from '@/lib/db-mysql';
 export async function GET() {
   try {
     const [projects]: any = await db.execute('SELECT * FROM projects ORDER BY date DESC');
-    const formattedProjects = Array.isArray(projects) ? projects.map((project: any) => ({
-      ...project,
-      technologies: project.technologies ? JSON.parse(project.technologies) : []
-    })) : [];
+    const formattedProjects = Array.isArray(projects) ? projects.map((project: any) => {
+      let technologies = [];
+      try {
+        if (project.technologies) {
+          technologies = JSON.parse(project.technologies);
+        }
+      } catch (error) {
+        console.error(`Failed to parse technologies for project ${project.id}:`, error);
+      }
+      return {
+        ...project,
+        technologies: technologies
+      };
+    }) : [];
     return NextResponse.json(formattedProjects);
   } catch (error) {
     console.error('Failed to fetch projects:', error);

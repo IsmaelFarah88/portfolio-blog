@@ -5,10 +5,20 @@ import db from '@/lib/db-mysql';
 export async function GET() {
   try {
     const [posts]: any = await db.execute('SELECT * FROM blog_posts ORDER BY date DESC');
-    const formattedPosts = Array.isArray(posts) ? posts.map(post => ({
-      ...post,
-      tags: post.tags ? JSON.parse(post.tags) : []
-    })) : [];
+    const formattedPosts = Array.isArray(posts) ? posts.map(post => {
+      let tags = [];
+      try {
+        if (post.tags) {
+          tags = JSON.parse(post.tags);
+        }
+      } catch (error) {
+        console.error(`Failed to parse tags for post ${post.id}:`, error);
+      }
+      return {
+        ...post,
+        tags: tags
+      };
+    }) : [];
     return NextResponse.json(formattedPosts);
   } catch (error) {
     console.error('Failed to fetch blog posts:', error);
