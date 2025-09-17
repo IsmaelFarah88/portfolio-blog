@@ -14,14 +14,17 @@
     "@react-three/drei": "^10.7.6",
     "@react-three/fiber": "^9.3.0",
     "better-sqlite3": "^12.2.0",
+    "dotenv": "^16.4.5",
     "framer-motion": "^12.23.12",
+    "mocha": "^11.7.2",
     "mysql2": "^3.9.7",
     "next": "15.5.3",
     "node-fetch": "^3.3.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "three": "^0.180.0",
-    "dotenv": "^16.4.5"
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
