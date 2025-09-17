@@ -4,6 +4,10 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+console.log('--- DEBUG: MYSQL_CA_CERT ---');
+console.log(process.env.MYSQL_CA_CERT);
+console.log('--- END DEBUG ---');
+
 // Create a connection pool
 const pool = mysql.createPool({
   host: process.env.MYSQL_HOST,
