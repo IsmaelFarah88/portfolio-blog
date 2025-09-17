@@ -6,19 +6,21 @@ dotenv.config();
 
 // Create a connection pool
 const getSslOptions = () => {
-  if (process.env.MYSQL_CA_CERT) {
-    return { ca: process.env.MYSQL_CA_CERT };
-  }
-  try {
-    // This will work for local development where the certs/ca.pem file exists.
-    // In production (Netlify), this will fail, but we will rely on the env var.
-    return { ca: fs.readFileSync('certs/ca.pem') };
-  } catch (error) {
-    console.warn('CA certificate file not found. Relying on MYSQL_CA_CERT environment variable.');
-    // Return an empty object if the file doesn't exist,
-    // so the build doesn't crash. The runtime connection will
-    // then depend entirely on the environment variable being set.
-    return {};
+  console.log('NETLIFY_DEBUG: Checking MYSQL_CA_CERT variable.');
+  const caCert = process.env.MYSQL_CA_CERT;
+
+  if (caCert) {
+    console.log(`NETLIFY_DEBUG: MYSQL_CA_CERT is DEFINED. Length: ${caCert.length}`);
+    console.log(`NETLIFY_DEBUG: Starts with: ${caCert.substring(0, 20)}`);
+    return { ca: caCert };
+  } else {
+    console.log('NETLIFY_DEBUG: MYSQL_CA_CERT is UNDEFINED or EMPTY. Trying local file.');
+    try {
+      return { ca: fs.readFileSync('certs/ca.pem') };
+    } catch (error) {
+      console.warn('NETLIFY_DEBUG: Local ca.pem file not found.');
+      return {};
+    }
   }
 };
 
