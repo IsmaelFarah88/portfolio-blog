@@ -13,7 +13,6 @@
   "dependencies": {
     "@react-three/drei": "^10.7.6",
     "@react-three/fiber": "^9.3.0",
-    "better-sqlite3": "^12.2.0",
     "dotenv": "^16.4.5",
     "framer-motion": "^12.23.12",
     "mocha": "^11.7.2",
@@ -29,7 +28,6 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
