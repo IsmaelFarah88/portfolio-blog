@@ -39,7 +39,7 @@ export default function RichTextEditor({ initialValue, onEditorChange }: RichTex
         skin: isDarkMode ? 'oxide-dark' : 'oxide',
         content_css: isDarkMode ? 'dark' : 'default',
         directionality: 'rtl', // Default to RTL for Arabic
-        images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
+        images_upload_handler: (blobInfo, _progress) => new Promise((resolve, reject) => {
           // This is a placeholder for image uploads.
           // For a real application, you would upload the blobInfo.blob() to a server and resolve with the URL.
           const reader = new FileReader();
@@ -53,7 +53,7 @@ export default function RichTextEditor({ initialValue, onEditorChange }: RichTex
           reader.readAsDataURL(blobInfo.blob());
         }),
       }}
-      onEditorChange={(content, editor) => {
+      onEditorChange={(content, _editor) => {
         onEditorChange(content);
       }}
     />

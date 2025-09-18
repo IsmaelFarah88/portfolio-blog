@@ -48,9 +48,9 @@ export default function BlogPostPage({ params }: { params: Promise<{ id: string 
     : `© ${new Date().getFullYear()} Ismael Farah. All rights reserved.`;
 
   // Parse footer links from JSON
-  const footerLinks = siteContent.footer_links 
+  const footerLinks: { name: string, url: string }[] = siteContent.footer_links
     ? JSON.parse(siteContent.footer_links) 
-    : ['Twitter', 'GitHub', 'LinkedIn'];
+    : [];
 
   if (loading) {
     return (
@@ -209,13 +209,15 @@ export default function BlogPostPage({ params }: { params: Promise<{ id: string 
               </p>
             </div>
             <div className="flex space-x-6">
-              {footerLinks.map((link: string, index: number) => (
+              {footerLinks.map((link, index) => (
                 <a 
                   key={index} 
-                  href="#" 
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors"
                 >
-                  {link}
+                  {link.name}
                 </a>
               ))}
             </div>
