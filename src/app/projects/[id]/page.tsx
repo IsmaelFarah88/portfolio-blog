@@ -47,7 +47,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     ? siteContent.footer_copyright.replace('{currentYear}', new Date().getFullYear().toString())
     : `© ${new Date().getFullYear()} Ismael Farah. All rights reserved.`;
 
-  const footerLinks = siteContent.footer_links
+  const footerLinks: { name: string, url: string }[] = siteContent.footer_links
     ? JSON.parse(siteContent.footer_links)
     : [];
 

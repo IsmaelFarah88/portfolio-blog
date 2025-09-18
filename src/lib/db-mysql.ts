@@ -13,7 +13,7 @@ const getSslOptions = () => {
     // This will work for local development where the certs/ca.pem file exists.
     // In production (Netlify), this will fail, but we will rely on the env var.
     return { ca: fs.readFileSync('certs/ca.pem') };
-  } catch (error) {
+  } catch (_error) {
     console.warn('CA certificate file not found. Relying on MYSQL_CA_CERT environment variable.');
     // Return an empty object if the file doesn't exist,
     // so the build doesn't crash. The runtime connection will
