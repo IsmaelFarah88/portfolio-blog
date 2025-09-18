@@ -21,7 +21,7 @@ export default function RichTextEditor({ initialValue, onEditorChange }: RichTex
 
   return (
     <Editor
-      apiKey="no-api-key" // It's recommended to get a free API key from tiny.cloud
+      apiKey="ohlz8gpap02w1tf1sx5mrlnzgmyl4qzbnh1di752vw2qd792"
       initialValue={initialValue || '<p>اكتب المحتوى هنا...</p>'}
       init={{
         height: 500,
