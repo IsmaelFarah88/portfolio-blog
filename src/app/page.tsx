@@ -16,6 +16,18 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (isMenuOpen) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+    // Cleanup function to remove the class if the component unmounts
+    return () => {
+      document.body.classList.remove('overflow-hidden');
+    };
+  }, [isMenuOpen]);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const [content, skillsData, certificationsData, projectsData] = await Promise.all([
@@ -517,7 +529,7 @@ export default function Home() {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors"
+                  className="text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-all transform hover:-translate-y-1"
                 >
                   {link.name}
                 </a>
