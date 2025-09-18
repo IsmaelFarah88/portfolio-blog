@@ -14,6 +14,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const project = projects[0];
     const formattedProject = {
       ...project,
+      imageUrl: project.image_url,
+      demoUrl: project.demo_url,
+      githubUrl: project.github_url,
       technologies: project.technologies ? JSON.parse(project.technologies) : []
     };
     
