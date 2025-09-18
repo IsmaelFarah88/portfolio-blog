@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createBlogPost } from '@/lib/data';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 
 export default function NewBlogPost() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -154,18 +155,13 @@ export default function NewBlogPost() {
           </div>
           
           <div className="mb-6">
-            <label htmlFor="content" className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">
+            <label className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">
               Content
             </label>
-            <textarea
-              id="content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows={12}
-              className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-              placeholder="Write your blog post content here..."
-              required
-            ></textarea>
+            <RichTextEditor
+              initialValue="<p>اكتب محتوى المقال هنا...</p>"
+              onEditorChange={(newContent) => setContent(newContent)}
+            />
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">

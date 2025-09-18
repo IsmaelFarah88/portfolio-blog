@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { getBlogPostById, getSiteContent } from '@/lib/data';
 import { BlogPost } from '@/lib/types';
 import { motion } from 'framer-motion';
+import DOMPurify from 'dompurify';
 
 export default function BlogPostPage({ params }: { params: Promise<{ id: string }> }) {
   const [post, setPost] = useState<BlogPost | null>(null);
@@ -169,9 +170,10 @@ export default function BlogPostPage({ params }: { params: Promise<{ id: string 
               <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
                 {post.excerpt}
               </p>
-              <div className="text-gray-800 dark:text-gray-200 whitespace-pre-line">
-                {post.content}
-              </div>
+              <div
+                className="text-gray-800 dark:text-gray-200"
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
+              />
             </div>
             
             {post.linkUrl && (
