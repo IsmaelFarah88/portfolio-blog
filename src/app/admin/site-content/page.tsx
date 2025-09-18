@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getSiteContent, updateSiteContent } from '@/lib/data';
+import FooterLinksEditor from '@/components/admin/FooterLinksEditor';
 
 export default function SiteContentPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -314,20 +315,13 @@ export default function SiteContentPage() {
           </div>
           
           <div className="mb-6">
-            <label htmlFor="footer_links" className="block text-gray-700 dark:text-gray-300 mb-2">
-              Footer Links (JSON)
+            <label className="block text-gray-700 dark:text-gray-300 mb-2">
+              Footer Links
             </label>
-            <textarea
-              id="footer_links"
-              value={content.footer_links || ''}
-              onChange={(e) => handleContentChange('footer_links', e.target.value)}
-              rows={3}
-              className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition font-mono text-sm"
-              placeholder='Enter footer links as JSON array, e.g., [&quot;Twitter&quot;, &quot;GitHub&quot;, &quot;LinkedIn&quot;]'
-            ></textarea>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Enter as a valid JSON array of strings
-            </p>
+            <FooterLinksEditor
+              value={content.footer_links || '[]'}
+              onChange={(newValue) => handleContentChange('footer_links', newValue)}
+            />
           </div>
         </div>
         
