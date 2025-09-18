@@ -173,6 +173,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ id: string 
               <div
                 className="text-gray-800 dark:text-gray-200"
                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
+                dir="auto"
               />
             </div>
             
@@ -215,7 +216,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ id: string 
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors"
+                  className="text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-all transform hover:-translate-y-1"
                 >
                   {link.name}
                 </a>

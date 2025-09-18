@@ -242,6 +242,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                     <div
                       className="prose dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-8"
                       dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.description) }}
+                      dir="auto"
                     />
 
                     <div className="bg-indigo-50 dark:bg-gray-800 rounded-xl p-6 mb-8">
@@ -381,7 +382,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors"
+                  className="text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-all transform hover:-translate-y-1"
                 >
                   {link.name}
                 </a>
