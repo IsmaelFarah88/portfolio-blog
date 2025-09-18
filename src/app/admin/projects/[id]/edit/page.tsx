@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getProjectById, updateProject } from '@/lib/data';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 
 export default function EditProject({ params }: { params: Promise<{ id: string }> }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -179,18 +180,13 @@ export default function EditProject({ params }: { params: Promise<{ id: string }
             </div>
             
             <div className="mb-6">
-              <label htmlFor="description" className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">
+              <label className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">
                 Description
               </label>
-              <textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={5}
-                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
-                placeholder="Enter project description"
-                required
-              ></textarea>
+              {description && <RichTextEditor
+                initialValue={description}
+                onEditorChange={(newContent) => setDescription(newContent)}
+              />}
             </div>
             
             <div className="mb-6">

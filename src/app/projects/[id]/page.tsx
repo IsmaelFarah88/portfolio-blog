@@ -8,6 +8,7 @@ import { getProjectById, getSiteContent } from '@/lib/data';
 import { Project } from '@/lib/types';
 import { motion } from 'framer-motion';
 import Project3DVisualization from '@/components/Project3DVisualization';
+import DOMPurify from 'dompurify';
 
 export default function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const [project, setProject] = useState<Project | null>(null);
@@ -19,18 +20,17 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Unwrap the params promise
         const { id } = await params;
         const [projectData, siteContentData] = await Promise.all([
           getProjectById(id),
           getSiteContent()
         ]);
-        
+
         if (!projectData) {
           router.push('/projects');
           return;
         }
-        
+
         setProject(projectData);
         setSiteContent(siteContentData);
       } catch (error) {
@@ -43,15 +43,13 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     fetchData();
   }, [params, router]);
 
-  // Replace {currentYear} with actual year
-  const copyrightText = siteContent.footer_copyright 
+  const copyrightText = siteContent.footer_copyright
     ? siteContent.footer_copyright.replace('{currentYear}', new Date().getFullYear().toString())
     : `© ${new Date().getFullYear()} Ismael Farah. All rights reserved.`;
 
-  // Parse footer links from JSON
-  const footerLinks = siteContent.footer_links 
-    ? JSON.parse(siteContent.footer_links) 
-    : ['Twitter', 'GitHub', 'LinkedIn'];
+  const footerLinks = siteContent.footer_links
+    ? JSON.parse(siteContent.footer_links)
+    : [];
 
   if (loading) {
     return (
@@ -72,8 +70,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           <p className="text-gray-600 dark:text-gray-400 mb-6">
             The project you&apos;re looking for doesn&apos;t exist or has been removed.
           </p>
-          <Link 
-            href="/projects" 
+          <Link
+            href="/projects"
             className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all glow inline-block"
           >
             Back to Projects
@@ -85,7 +83,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      {/* Header */}
       <header className="sticky top-0 z-50 glass-effect">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
@@ -106,15 +103,14 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        {/* Back Button */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
           className="mb-6"
         >
-          <Link 
-            href="/projects" 
+          <Link
+            href="/projects"
             className="inline-flex items-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
@@ -124,7 +120,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           </Link>
         </motion.div>
 
-        {/* Project Detail Section */}
         <section className="mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -132,12 +127,11 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             transition={{ duration: 0.5 }}
             className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 gradient-border overflow-hidden"
           >
-            {/* Project Header with Image */}
             {project.imageUrl ? (
               <div className="relative h-64 md:h-80 w-full">
-                <Image 
-                  src={project.imageUrl} 
-                  alt={project.title} 
+                <Image
+                  src={project.imageUrl}
+                  alt={project.title}
                   className="w-full h-full object-cover"
                   fill
                   unoptimized
@@ -174,7 +168,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               </div>
             )}
 
-            {/* Action Buttons */}
             <div className="p-6 md:p-8 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
               <div className="flex flex-wrap gap-4">
                 {project.demoUrl && (
@@ -206,7 +199,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               </div>
             </div>
 
-            {/* Tab Navigation */}
             <div className="border-b border-gray-200 dark:border-gray-700">
               <div className="flex overflow-x-auto">
                 <button
@@ -242,16 +234,16 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               </div>
             </div>
 
-            {/* Tab Content */}
             <div className="p-6 md:p-8">
               {activeTab === 'overview' && (
                 <div className="flex flex-col lg:flex-row gap-8">
                   <div className="lg:w-1/2">
                     <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Project Description</h2>
-                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-8">
-                      {project.description}
-                    </p>
-                    
+                    <div
+                      className="prose dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-8"
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.description) }}
+                    />
+
                     <div className="bg-indigo-50 dark:bg-gray-800 rounded-xl p-6 mb-8">
                       <h3 className="text-lg font-bold mb-3 text-indigo-800 dark:text-indigo-200">Project Information</h3>
                       <div className="grid grid-cols-2 gap-4">
@@ -266,13 +258,13 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="lg:w-1/2">
                     {project.imageUrl && (
                       <div className="rounded-xl overflow-hidden shadow-lg mb-8">
-                        <Image 
-                          src={project.imageUrl} 
-                          alt={project.title} 
+                        <Image
+                          src={project.imageUrl}
+                          alt={project.title}
                           className="w-full h-auto"
                           width={600}
                           height={400}
@@ -280,7 +272,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                         />
                       </div>
                     )}
-                    
+
                     <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 rounded-xl p-6">
                       <h3 className="text-lg font-bold mb-3 text-gray-800 dark:text-white">Quick Links</h3>
                       <div className="flex flex-wrap gap-3">
@@ -371,7 +363,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         </section>
       </main>
 
-      {/* Footer */}
       <footer className="py-12 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
@@ -384,13 +375,15 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               </p>
             </div>
             <div className="flex space-x-6">
-              {footerLinks.map((link: string, index: number) => (
-                <a 
-                  key={index} 
-                  href="#" 
+              {footerLinks.map((link, index) => (
+                <a
+                  key={index}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors"
                 >
-                  {link}
+                  {link.name}
                 </a>
               ))}
             </div>

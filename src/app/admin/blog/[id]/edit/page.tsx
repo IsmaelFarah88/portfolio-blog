@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getBlogPostById, updateBlogPost } from '@/lib/data';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 
 export default function EditBlogPost({ params }: { params: Promise<{ id: string }> }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -191,18 +192,14 @@ export default function EditBlogPost({ params }: { params: Promise<{ id: string 
             </div>
             
             <div className="mb-6">
-              <label htmlFor="content" className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">
+              <label className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">
                 Content
               </label>
-              <textarea
-                id="content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                rows={10}
-                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
-                placeholder="Enter blog post content"
-                required
-              ></textarea>
+              {/* Add a key to force re-render when content is loaded */}
+              {content && <RichTextEditor
+                initialValue={content}
+                onEditorChange={(newContent) => setContent(newContent)}
+              />}
             </div>
             
             <div className="mb-6">

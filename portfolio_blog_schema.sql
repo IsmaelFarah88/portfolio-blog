@@ -96,7 +96,7 @@ INSERT IGNORE INTO site_content (id, content) VALUES
 ('skills_title', 'Technologies I Work With'),
 ('skills_list', '[\"React\", \"Next.js\", \"TypeScript\", \"Node.js\", \"Tailwind CSS\", \"MongoDB\", \"GraphQL\", \"Docker\"]'),
 ('footer_copyright', '© {currentYear} Ismael Farah. All rights reserved.'),
-('footer_links', '[\"Twitter\", \"GitHub\", \"LinkedIn\"]'),
+('footer_links', '[{\"name\":\"GitHub\",\"url\":\"#\"},{\"name\":\"LinkedIn\",\"url\":\"#\"},{\"name\":\"Twitter\",\"url\":\"#\"}]'),
 ('projects_title', 'My Projects'),
 ('projects_subtitle', 'A collection of my web development projects and applications.'),
 ('projects_all_button', 'All Projects'),

@@ -44,9 +44,9 @@ export default function Home() {
     : ['React', 'Next.js', 'TypeScript', 'Node.js', 'Tailwind CSS', 'MongoDB', 'GraphQL', 'Docker'];
 
   // Parse footer links from JSON
-  const footerLinks = siteContent.footer_links 
+  const footerLinks: { name: string, url: string }[] = siteContent.footer_links
     ? JSON.parse(siteContent.footer_links) 
-    : ['Twitter', 'GitHub', 'LinkedIn'];
+    : [];
 
   // Replace {currentYear} with actual year
   const copyrightText = siteContent.footer_copyright 
@@ -511,13 +511,15 @@ export default function Home() {
               </p>
             </div>
             <div className="flex space-x-6">
-              {footerLinks.map((link: string, index: number) => (
+              {footerLinks.map((link, index) => (
                 <a 
                   key={index} 
-                  href="#" 
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors"
                 >
-                  {link}
+                  {link.name}
                 </a>
               ))}
             </div>
