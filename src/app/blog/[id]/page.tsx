@@ -166,12 +166,12 @@ export default function BlogPostPage({ params }: { params: Promise<{ id: string 
               </div>
             </div>
             
-            <div className="prose prose-lg dark:prose-invert max-w-none">
+            <div>
               <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
                 {post.excerpt}
               </p>
               <div
-                className="text-gray-800 dark:text-gray-200"
+                className="prose prose-lg dark:prose-invert max-w-none"
                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
                 dir="auto"
               />
